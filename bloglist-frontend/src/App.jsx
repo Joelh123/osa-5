@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import Notification from './components/Notification'
+import ErrorMessage from './components/ErrorMessage'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -11,6 +13,8 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const [notification, setNotification] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -23,6 +27,7 @@ const App = () => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
+      blogService.setToken(user.token)
     }
   }, [])
 
@@ -41,7 +46,11 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      console.log('Wrong credentials')
+      setErrorMessage('Wrong credentials')
+
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 2500)
     }
   }
 
@@ -66,11 +75,28 @@ const App = () => {
       .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
       })
+
+    if (!(blogObject.title || blogObject.author || blogObject.url)) {
+      setErrorMessage('Fill every field')
+
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 2500)
+      return null
+    }
+
+    setNotification(`a new blog ${blogObject.title} by ${blogObject.author} added`)
+
+    setTimeout(() => {
+      setNotification(null)
+    }, 2500)
   }
 
   const loginForm = () => (
     <form onSubmit={handleLogin}>
       <h2>Login</h2>
+      <Notification message={notification} />
+      <ErrorMessage message={errorMessage} />
       <div>
         username
           <input 
@@ -96,6 +122,8 @@ const App = () => {
   const blogForm = user => (
     <div>
       <h2>blogs</h2>
+      <Notification message={notification} />
+      <ErrorMessage message={errorMessage} />
       <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
       <h2>create new</h2>
       <form onSubmit={createBlog}>
