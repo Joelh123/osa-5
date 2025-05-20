@@ -12,9 +12,6 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
   const [notification, setNotification] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
 
@@ -75,14 +72,7 @@ const App = () => {
     setUrl(event.target.value)
   }
 
-  const createBlog = (event) => {
-    event.preventDefault()
-
-    const blogObject = {
-      title: title,
-      author: author,
-      url: url
-    }
+  const createBlog = (blogObject) => {
 
     blogService
       .create(blogObject)
@@ -140,15 +130,7 @@ const App = () => {
       <ErrorMessage message={errorMessage} />
       <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
       <Togglable buttonLabel={'new blog'}>
-        <BlogForm 
-        onSubmit={createBlog} 
-        handleTitleChange={handleTitleChange} 
-        handleAuthorChange={handleAuthorChange} 
-        handleUrlChange={handleUrlChange} 
-        title={title} 
-        author={author} 
-        url={url} 
-        />
+        <BlogForm createBlog={createBlog} />
       </Togglable>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
