@@ -60,18 +60,6 @@ const App = () => {
     setUser(null)
   }
 
-  const handleTitleChange = (event) => {
-    setTitle(event.target.value)
-  }
-
-  const handleAuthorChange = (event) => {
-    setAuthor(event.target.value)
-  }
-
-  const handleUrlChange = (event) => {
-    setUrl(event.target.value)
-  }
-
   const createBlog = (blogObject) => {
 
     blogService
@@ -94,6 +82,20 @@ const App = () => {
     setTimeout(() => {
       setNotification(null)
     }, 2500)
+  }
+
+  const updateBlog = (blog) => {
+    blogService
+      .update(blog.id, {
+        title: blog.title, 
+        author: blog.author, 
+        url: blog.url, 
+        likes: blog.likes + 1,
+        user: blog.user._id
+      })
+      .then(response => {
+        setBlogs(blogs.map(blog => blog.id === response.id ? response : blog))
+      })
   }
 
   const loginForm = () => (
@@ -133,7 +135,7 @@ const App = () => {
         <BlogForm createBlog={createBlog} />
       </Togglable>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
       )}
     </div>
   )
