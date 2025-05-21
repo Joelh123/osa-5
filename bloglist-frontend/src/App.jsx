@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import ErrorMessage from './components/ErrorMessage'
@@ -6,6 +6,7 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
+import LoginForm from './components/LoginForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -15,10 +16,12 @@ const App = () => {
   const [notification, setNotification] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
 
+  const blogFormRef = useRef()
+
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs(blogs.sort((a, b) => b.likes - a.likes))
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -61,7 +64,7 @@ const App = () => {
   }
 
   const createBlog = (blogObject) => {
-
+    blogFormRef.current.toggleVisibility()
     blogService
       .create(blogObject)
       .then(returnedBlog => {
@@ -87,9 +90,9 @@ const App = () => {
   const updateBlog = (blog) => {
     blogService
       .update(blog.id, {
-        title: blog.title, 
-        author: blog.author, 
-        url: blog.url, 
+        title: blog.title,
+        author: blog.author,
+        url: blog.url,
         likes: blog.likes + 1,
         user: blog.user._id
       })
@@ -117,30 +120,12 @@ const App = () => {
   }
 
   const loginForm = () => (
-    <form onSubmit={handleLogin}>
+    <>
       <h1>Login</h1>
       <Notification message={notification} />
       <ErrorMessage message={errorMessage} />
-      <div>
-        username
-          <input 
-          type='text'
-          value={username}
-          name='Username'
-          onChange={({ target }) => setUsername(target.value)}
-          />
-      </div>
-      <div>
-        password
-          <input 
-          type='password'
-          value={password}
-          name='Password'
-          onChange={({ target }) => setPassword(target.value)}
-          />
-      </div>
-      <button type='submit'>login</button>
-    </form>
+      <LoginForm handleLogin={handleLogin} setUsername={setUsername} setPassword={setPassword} username={username} password={password} />
+    </>
   )
 
   const blogForm = user => (
@@ -149,7 +134,7 @@ const App = () => {
       <Notification message={notification} />
       <ErrorMessage message={errorMessage} />
       <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
-      <Togglable buttonLabel={'new blog'}>
+      <Togglable buttonLabel={'new blog'} ref={blogFormRef}>
         <BlogForm createBlog={createBlog} />
       </Togglable>
       {blogs.map(blog =>
@@ -160,7 +145,7 @@ const App = () => {
 
   return (
     <div>
-      {user === null 
+      {user === null
         ? loginForm()
         : blogForm(user)
       }
