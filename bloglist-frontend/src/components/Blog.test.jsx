@@ -22,9 +22,10 @@ describe('<Blog />', () => {
   }
 
   let container
+  const mockHandler = vi.fn()
 
   beforeEach(() => {
-    container = render(<Blog blog={blog} user={user} />).container
+    container = render(<Blog blog={blog} user={user} updateBlog={mockHandler} />).container
   })
   test('renders title', () => {
     const div = container.querySelector('.blog')
@@ -76,5 +77,17 @@ describe('<Blog />', () => {
 
     const div = container.querySelector('.hidden')
     expect(div).toHaveTextContent('10')
+  })
+
+  test('pressing like twice call the handler twice', async () => {
+    const mockUser = userEvent.setup()
+    const button = screen.getByText('view')
+    await mockUser.click(button)
+
+    const likeButton = screen.getByText('like')
+    await mockUser.click(likeButton)
+    await mockUser.click(likeButton)
+
+    expect(mockHandler.mock.calls).toHaveLength(2)
   })
 })
