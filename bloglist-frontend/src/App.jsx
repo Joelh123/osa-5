@@ -97,7 +97,11 @@ const App = () => {
         user: blog.user._id
       })
       .then(response => {
-        setBlogs(blogs.map(blog => blog.id === response.id ? response : blog).sort((a, b) => b.likes - a.likes))
+        const updatedBlog = {
+          ...response,
+          user: typeof response.user === 'object' ? response.user : blog.user
+        }
+        setBlogs(blogs.map(blog => blog.id === updatedBlog.id ? updatedBlog : blog).sort((a, b) => b.likes - a.likes))
       })
   }
 
