@@ -125,7 +125,7 @@ const App = () => {
 
   const loginForm = () => (
     <>
-      <h1>Login</h1>
+      <h1 data-testid='login-header'>Login</h1>
       <Notification message={notification} />
       <ErrorMessage message={errorMessage} />
       <LoginForm handleLogin={handleLogin} setUsername={setUsername} setPassword={setPassword} username={username} password={password} />
