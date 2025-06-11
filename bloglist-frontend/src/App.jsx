@@ -52,7 +52,7 @@ const App = () => {
 
       setTimeout(() => {
         setErrorMessage(null)
-      }, 2500)
+      }, 5000)
     }
   }
 
@@ -76,7 +76,7 @@ const App = () => {
 
       setTimeout(() => {
         setErrorMessage(null)
-      }, 2500)
+      }, 5000)
       return null
     }
 
@@ -84,7 +84,7 @@ const App = () => {
 
     setTimeout(() => {
       setNotification(null)
-    }, 2500)
+    }, 5000)
   }
 
   const updateBlog = (blog) => {
@@ -117,7 +117,7 @@ const App = () => {
 
       setTimeout(() => {
         setNotification('')
-      }, 2500)
+      }, 5000)
     } else {
       return null
     }
