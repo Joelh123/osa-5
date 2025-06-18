@@ -132,7 +132,8 @@ const App = () => {
     </>
   )
 
-  const blogForm = user => (
+
+  const blogForm = user => { console.log(JSON.stringify(blogs)); return (
     <div>
       <h1>blogs</h1>
       <Notification message={notification} />
@@ -145,7 +146,7 @@ const App = () => {
         <Blog key={blog.id} blog={blog} updateBlog={updateBlog} removeBlog={removeBlog} user={user} />
       )}
     </div>
-  )
+  )}
 
   return (
     <div>

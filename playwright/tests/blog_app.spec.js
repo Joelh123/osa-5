@@ -3,8 +3,8 @@ const { loginWith, createBlog } = require('./helper')
 
 describe('Blog app', () => {
     beforeEach(async ({ page, request }) => {
-        await request.post('http://localhost:3003/api/testing/reset')
-        await request.post('http://localhost:3003/api/users', {
+        await request.post('/api/testing/reset')
+        await request.post('/api/users', {
             data: {
                 name: 'Joel',
                 username: 'Joel123',
@@ -45,15 +45,31 @@ describe('Blog app', () => {
 
         test('a new blog can be created', async ({ page }) => {
             await createBlog(page, 'new blog by playwright', 'greenhorn', 'newbie.com')
-            await expect(page.getByText('new blog by playwright')).toBeVisible()
+            const blogDiv = page.locator(".blog")
+            await expect(blogDiv).toContainText('new blog by playwright');
+        })
+        
+        describe('there is a blog', () => {
+            beforeEach(async ({ page }) => {
+                await createBlog(page, 'new blog by playwright', 'greenhorn', 'newbie.com')
+            })
+
+            test('a blog can be liked', async ({ page }) => {
+                await page.getByRole('button', { name: 'view' }).click()
+                await page.getByRole('button', { name: 'like' }).click()
+
+                await expect(page.getByTestId('likes')).toHaveText('1 like')
+            })
+
+            test('a blog can be deleted by the creator', async ({ page }) => {
+                await page.getByRole('button', { name: 'view' }).click()
+                page.on('dialog', async dialog => await dialog.accept());
+                await page.getByRole('button', { name: 'remove' }).click()
+
+                const blogDiv = page.locator(".blog")
+                await expect(blogDiv).not.toBeVisible()
+            })
         })
 
-        test('a blog can be liked', async ({ page }) => {
-            await createBlog(page, 'new blog by playwright', 'greenhorn', 'newbie.com')
-            await page.getByRole('button', { name: 'view' }).click()
-            await page.getByRole('button', { name: 'like' }).click()
-
-            await expect(page.getByTestId('likes')).toHaveText('1 like')
-        })
     })
 })
