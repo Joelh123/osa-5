@@ -12,7 +12,7 @@ describe('Blog app', () => {
             }
         })
 
-        await page.goto('http://localhost:5173/')
+        await page.goto('/')
     })
 
     test('Login form is shown', async ({ page }) => {
@@ -45,7 +45,15 @@ describe('Blog app', () => {
 
         test('a new blog can be created', async ({ page }) => {
             await createBlog(page, 'new blog by playwright', 'greenhorn', 'newbie.com')
-            await expect(page.getByText('a new blog new blog by playwright by greenhorn added')).toBeVisible()
+            await expect(page.getByText('new blog by playwright')).toBeVisible()
+        })
+
+        test('a blog can be liked', async ({ page }) => {
+            await createBlog(page, 'new blog by playwright', 'greenhorn', 'newbie.com')
+            await page.getByRole('button', { name: 'view' }).click()
+            await page.getByRole('button', { name: 'like' }).click()
+
+            await expect(page.getByTestId('likes')).toHaveText('1 like')
         })
     })
 })

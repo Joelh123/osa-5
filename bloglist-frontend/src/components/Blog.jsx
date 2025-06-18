@@ -26,7 +26,7 @@ const Blog = ({ blog, updateBlog, removeBlog, user }) => {
       <div style={hideWhenVisible} className='hidden'>
         {blog.title} {blog.author} <button onClick={() => setMoreVisible(!moreVisible)}>hide</button>
         <div>{blog.url}</div>
-        <div>{blog.likes} <button onClick={() => updateBlog(blog)}>like</button></div>
+        <div data-testid='likes'>{blog.likes} <button onClick={() => updateBlog(blog)}>like</button></div>
         <div>{blog.user.name}</div>
         {user.username === blog.user.username
           ? <button onClick={() => removeBlog(blog)}>remove</button>
