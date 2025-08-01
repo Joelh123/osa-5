@@ -84,6 +84,15 @@ describe('Blog app', () => {
                 await page.getByRole('button', { name: 'view' }).click()
                 await expect(page.getByRole('button', { name: 'remove' })).not.toBeVisible()
             })
+
+            test('blogs are arranged based on likes', async ({ page }) => {
+                await createBlog(page, 'most likes', 'Mr. Like', 'like.com')
+                const blogDiv = page.locator(".blog").last()
+                await blogDiv.getByRole('button', { name: 'view' }).click()
+                await blogDiv.getByRole('button', { name: 'like' }).click()
+                const mostLikesBlog = page.locator(".blog").first()
+                await expect(mostLikesBlog).toContainText('most likes');
+            })
         })
     })
 })
